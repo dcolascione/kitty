@@ -133,6 +133,9 @@ install: |
             cd ..
             popd
         fi
+        if [[ "$BUILD_PKG" == "linux-package" ]]; then
+            pip install sphinx
+        fi
     fi
     pkg-config --cflags harfbuzz
     if [[ "$TRAVIS_OS_NAME" != 'osx' ]]; then
@@ -149,4 +152,5 @@ script:
     - if grep -Inr '\s$' kitty kitty_tests kittens docs *.py *.asciidoc *.rst .gitattributes .gitignore; then echo Trailing whitespace found, aborting.; exit 1; fi
     - if [[ -z $SANITIZE_ARG ]]; then $PYTHON test.py; else ./asan-launcher test.py; fi
     - if [[ "$RUN_FLAKE" == "1" ]]; then flake8 --count .; fi
+    - if [[ "$BUILD_PKG" == "linux-package" ]]; then make man && make html; fi
     - if [[ ! -z "$BUILD_PKG" ]]; then $PYTHON setup.py $BUILD_PKG; fi
